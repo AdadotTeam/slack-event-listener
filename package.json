@@ -25,9 +25,6 @@
   },
   "dependencies": {
     "@slack/bolt": "^3.11.1",
-    "auth0": "^2.36.1",
-    "aws-sdk": "^2.990.0",
-    "aws-xray-sdk": "^3.3.5",
     "chalk": "^4.1.2",
     "dotenv": "~10.0.0",
     "got": "^11.8.3",
@@ -42,8 +39,6 @@
     "zod": "^3.1.0"
   },
   "devDependencies": {
-    "@types/auth0": "^2.33.5",
-    "@types/aws-sdk": "^2.7.0",
     "@types/got": "^9.6.12",
     "@types/ioredis": "^4.27.4",
     "@types/jest": "^27.0.0",
