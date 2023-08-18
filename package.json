@@ -1,0 +1,72 @@
+{
+  "name": "bolt-app",
+  "version": "1.0.0",
+  "description": "Adadot Slack Bolt app.",
+  "homepage": "https://gitlab.com/adadot/slack",
+  "bugs": "https://gitlab.com/adadot/slack/issues",
+  "repository": "https://gitlab.com/adadot/slack",
+  "author": "eros",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node --compiler typescript -r tsconfig-paths/register src/index.ts",
+    "start": "node build/index.js",
+    "test": "jest",
+    "build": "rimraf build && tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./build",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "madge": "madge --orphans -j ./build && madge --circular -j ./build",
+    "sort": "sort-package-json",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,js,css,md}": "prettier . --write"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.11.1",
+    "auth0": "^2.36.1",
+    "aws-sdk": "^2.990.0",
+    "aws-xray-sdk": "^3.3.5",
+    "chalk": "^4.1.2",
+    "dotenv": "~10.0.0",
+    "got": "^11.8.3",
+    "ioredis": "^4.27.9",
+    "lodash": "^4.17.21",
+    "md5": "^2.3.0",
+    "mersenne-twister": "^1.1.0",
+    "source-map-support": "^0.5.21",
+    "tslib": "^2.2.0",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3",
+    "zod": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/auth0": "^2.33.5",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/got": "^9.6.12",
+    "@types/ioredis": "^4.27.4",
+    "@types/jest": "^27.0.0",
+    "@types/lodash.groupby": "^4.6.7",
+    "@types/md5": "^2.3.2",
+    "@types/mersenne-twister": "^1.1.2",
+    "@types/node": "^15.12.1",
+    "@types/uuid": "^8.3.0",
+    "lint-staged": "^12.3.3",
+    "madge": "^5.0.1",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.5.1",
+    "rimraf": "^3.0.2",
+    "simple-git-hooks": "^2.7.0",
+    "sort-package-json": "^1.50.0",
+    "ts-node": "^10.2.1",
+    "tsconfig-paths": "^3.9.0",
+    "tscpaths": "0.0.9",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "4.1.3"
+  },
+  "engines": {
+    "node": ">=12"
+  }
+}

@@ -1,0 +1,13 @@
+# don't lint:
+node_modules
+
+# config files
+.eslintrc.js
+.prettierrc.js
+
+# don't lint build output
+lib
+build
+lib
+# don't lint unit-test coverage
+coverage

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outDir": "./build",
+    "resolveJsonModule": true,
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "app/*": ["./app/*"],
+      "app": ["./app"],
+      "exceptions/*": ["./exceptions/*"],
+      "exceptions": ["./exceptions"],
+      "utils/*": ["./utils/*"],
+      "utils": ["./utils"],
+      "services/*": ["./services/*"],
+      "services": ["./services"],
+      "logger/*": ["./logger/*"],
+      "logger": ["./logger"]
+    },
+    "lib": ["es2020", "dom"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "typeRoots": ["node_modules/@types", "./src/@types"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.js", "src/**/*.dev.ts", "node_modules", "build"]
+}
