@@ -6,11 +6,28 @@ import {
   UserChangeEvent,
   UserHuddleChangedEvent,
 } from "@slack/bolt";
-
-import adadotService from "services/adadot";
-
+import {
+  channelCreated,
+  channelRenamed,
+  deleteWorkspace,
+  huddleStateChanged,
+  memberJoinedChannel,
+  messageReceived,
+  reactionAdded,
+  reactionRemoved,
+  teamJoin,
+} from "services/backend/endpoints";
+import { v4 as uuid } from "uuid";
+import {
+  MessagesToReactionsAssociationEntry,
+  ReactionEntry,
+  SlackEntryTypesV1,
+  UsersToReactionsAssociationEntry,
+} from "app/listeners/types";
 import Logger from "utils/logger";
-import { ReactionEventAction } from "./types";
+import { slackClient } from "services/slack-api";
+import { ReactionEventAction } from "services/backend/types/reactions";
+import DateUtil from "utils/date";
 
 const logger = Logger.create("events");
 
@@ -24,7 +41,7 @@ export default function (app: App): void {
 
     const { orgId, botToken } = args.context;
 
-    await adadotService.teamJoin({
+    await teamJoin({
       orgId,
       botToken: botToken as string,
       email: email as string,
@@ -36,12 +53,60 @@ export default function (app: App): void {
     const { context } = args;
     const { orgId, teamId } = context;
 
-    await adadotService.deleteWorkspace({ orgId, teamId: teamId as string });
+    await deleteWorkspace({ orgId, teamId: teamId as string });
+  });
+
+  app.event("channel_created", async (args) => {
+    const { payload, context } = args;
+    const { channel } = payload;
+    const meta = await slackClient(context.botToken as string).conversations.info({
+      channel: channel.id,
+      include_num_members: true,
+    });
+    if (meta.channel) {
+      const channel = {
+        ...meta.channel,
+        adadot_created_at: DateUtil.getDateNowInSeconds(),
+        entry_type: SlackEntryTypesV1.CHANNEL,
+        origin: "bolt-app",
+      };
+      await channelCreated(channel);
+    }
+  });
+
+  app.event("channel_rename", async (args) => {
+    const { payload, context } = args;
+    const { channel } = payload;
+    const meta = await slackClient(context.botToken as string).conversations.info({
+      channel: channel.id,
+      include_num_members: true,
+    });
+    if (meta.channel) {
+      const channel = {
+        ...meta.channel,
+        adadot_created_at: DateUtil.getDateNowInSeconds(),
+        entry_type: SlackEntryTypesV1.CHANNEL,
+        origin: "bolt-app",
+      };
+      await channelRenamed(channel);
+    }
+  });
+
+  app.event("member_joined_channel", async (args) => {
+    const { payload } = args;
+    const memberJoined = {
+      user_id: payload.user,
+      channel_id: payload.channel,
+      connection_identified_at: DateUtil.getDateNowInSeconds(),
+      adadot_created_at: DateUtil.getDateNowInSeconds(),
+      entry_type: SlackEntryTypesV1.MEMBERS_TO_CHANNELS,
+      origin: "bolt-app",
+    };
+    await memberJoinedChannel(memberJoined);
   });
 
   app.event("message", async (args) => {
     const { context, payload } = args;
-    const eventId = args.body.event_id;
     const {
       channel: channelId,
       channel_type: channelType,
@@ -50,23 +115,27 @@ export default function (app: App): void {
       client_msg_id: messageId,
     } = payload as GenericMessageEvent;
 
-    const { teamId } = context;
-    const eventMessage = {
-      eventId,
-      messageId,
-      teamId: teamId as string,
-      slackUserId,
-      channelId,
-      channelType,
-      timestamp: parseInt(eventTs, 10),
+    const tempMessage = payload as GenericMessageEvent;
+    const { text, ...payloadWithoutText } = tempMessage;
+    const message = {
+      ...payloadWithoutText,
+      channel: channelId,
+      channel_type: channelType,
+      user: slackUserId,
+      event_ts: eventTs,
+      client_msg_id: messageId,
+      team: context.teamId,
+      id: tempMessage.client_msg_id || uuid(),
+      channel_id: payload.channel,
+      adadot_created_at: DateUtil.getDateNowInSeconds(),
+      entry_type: SlackEntryTypesV1.MESSAGE,
+      origin: "bolt-app",
     };
-
-    await adadotService.saveMessage(eventMessage);
+    await messageReceived(message);
   });
 
   app.event("user_huddle_changed", async (args) => {
     const { context, payload } = args;
-    const eventId = args.body.event_id;
     const slackUserId = payload.user.id;
     const { event_ts: eventTs } = payload as UserHuddleChangedEvent;
     const huddleState = payload.user.profile.huddle_state;
@@ -75,28 +144,28 @@ export default function (app: App): void {
       return;
     }
     const { teamId } = context;
-
-    const huddleMessage = {
-      eventId,
-      teamId: teamId as string,
-      slackUserId,
-      timestamp: parseInt(eventTs, 10),
-      huddleState,
+    const huddle = {
+      ts: parseInt(eventTs, 10),
+      team_id: teamId as string,
+      user_id: slackUserId,
+      huddle_state: huddleState,
+      adadot_created_at: DateUtil.getDateNowInSeconds(),
+      entry_type: SlackEntryTypesV1.HUDDLE,
+      origin: "bolt-app",
     };
-
-    await adadotService.saveHuddle(huddleMessage);
+    await huddleStateChanged(huddle);
   });
 
   app.event("reaction_added", async (args) => {
     const event = buildReactionObject(args, ReactionEventAction.added);
     if (!event) return;
-    await adadotService.saveReaction(event);
+    await reactionAdded(buildReactionObjects(args, ReactionEventAction.added));
   });
 
   app.event("reaction_removed", async (args) => {
     const event = buildReactionObject(args, ReactionEventAction.removed);
     if (!event) return;
-    await adadotService.saveReaction(event);
+    await reactionRemoved(buildReactionObjects(args, ReactionEventAction.removed));
   });
 }
 
@@ -127,5 +196,63 @@ const buildReactionObject = (
     originalItemType,
     originalItem,
     reactionAction: action,
+  };
+};
+
+const buildReactionObjects = (
+  args: (
+    | SlackEventMiddlewareArgs<"reaction_added">
+    | SlackEventMiddlewareArgs<"reaction_removed">
+  ) &
+    AllMiddlewareArgs,
+  action: ReactionEventAction
+): {
+  reactionEntry: ReactionEntry;
+  messagesToReactionsAssociation?: MessagesToReactionsAssociationEntry;
+  usersToReactionsAssociation: UsersToReactionsAssociationEntry;
+} => {
+  const { payload } = args;
+  const { event_ts: eventTs, item_user, item, reaction, user } = payload;
+
+  const reactionId = uuid();
+
+  const reactionEntry = {
+    id: reactionId,
+    ts: parseInt(eventTs, 10),
+    reaction,
+    reactionAction: action,
+    item,
+    item_user: item_user || "automation",
+    adadot_created_at: DateUtil.getDateNowInSeconds(),
+    entry_type: SlackEntryTypesV1.REACTION,
+    origin: "bolt-app",
+  };
+
+  let messagesToReactionsAssociation;
+
+  if (item.type === "message") {
+    messagesToReactionsAssociation = {
+      message_ts: item.ts,
+      message_channel: item.channel,
+      reaction_id: reactionId,
+      adadot_created_at: DateUtil.getDateNowInSeconds(),
+      entry_type: SlackEntryTypesV1.REACTIONS_TO_MESSAGES,
+      origin: "bolt-app",
+    };
+  }
+
+  const usersToReactionsAssociation = {
+    user_id: user,
+    reaction_id: reactionId,
+    reaction_ts: parseInt(eventTs, 10),
+    adadot_created_at: DateUtil.getDateNowInSeconds(),
+    entry_type: SlackEntryTypesV1.USERS_TO_REACTIONS,
+    origin: "bolt-app",
+  };
+
+  return {
+    reactionEntry,
+    messagesToReactionsAssociation,
+    usersToReactionsAssociation,
   };
 };

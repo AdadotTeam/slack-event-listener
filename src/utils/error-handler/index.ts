@@ -1,5 +1,5 @@
 import { ErrorHandler } from "@slack/bolt/dist/App";
-import { NonUserEventError } from "app/exceptions/non-user-event-error";
+import { NonUserEventError } from "exceptions/non-user-event-error";
 import Logger from "utils/logger";
 
 const logger = Logger.create("error-handler");

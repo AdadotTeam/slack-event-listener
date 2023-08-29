@@ -1,7 +1,6 @@
 import Logger from "utils/logger";
 import { Authorize, AuthorizeSourceData } from "@slack/bolt";
-import { NonUserEventError } from "app/exceptions/non-user-event-error";
-import adadotService from "services/adadot";
+import { NonUserEventError } from "exceptions/non-user-event-error";
 
 const logger = Logger.create("authorizer");
 
@@ -32,22 +31,8 @@ export const authorizer: Authorize<boolean> = async (
     throw new NonUserEventError();
   }
 
-  const workspaceMeta = await adadotService.getWorkspaceMeta(teamId);
-
-  const { objectId: orgId, botToken, botUserId } = workspaceMeta;
-
-  logger.debug("Authorizing action", {
-    orgId,
-    teamId,
-    botToken,
-    botUserId,
-  });
-
   return {
-    orgId,
     teamId,
     botId: undefined,
-    botToken,
-    botUserId,
   };
 };
