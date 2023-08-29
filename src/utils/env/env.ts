@@ -14,5 +14,6 @@ export const env = z
     SLACK_APP_TOKEN: z.string(),
     SLACK_BOT_TOKEN: z.string(),
     API_URL: z.string().optional(),
+    API_KEY: z.string().optional(),
   })
   .parse(process.env);
