@@ -1,36 +1,37 @@
-import { ReactionFileCommentItem, ReactionFileItem, ReactionMessageItem } from "@slack/bolt";
+import {
+  GenericMessageEvent,
+  ReactionFileCommentItem,
+  ReactionFileItem,
+  ReactionMessageItem,
+} from "@slack/bolt";
+import { ReactionEventAction } from "services/backend/types/reactions";
+import { Channel } from "@slack/web-api/dist/response/ChannelsInfoResponse";
 
-export enum ReactionEventAction {
-  added = "added",
-  removed = "removed",
+interface EntryMeta {
+  adadot_created_at: number;
+  entry_type: string;
+  origin: string;
 }
 
-interface BaseEvent {
-  eventId: string;
-  teamId: string;
-  slackUserId: string;
-  timestamp: number;
+export interface MessageEntry extends GenericMessageEvent, EntryMeta {
+  channel: string;
+  user: string;
+  client_msg_id?: string;
+  team?: string;
+  id: string;
+  channel_id: string;
+  adadot_created_at: number;
+  entry_type: SlackEntryTypesV1;
+  origin: string;
 }
 
-export interface MessageEvent extends BaseEvent {
-  messageId: string | undefined;
-  channelId: string;
-  channelType: string;
+export interface ReactionParams {
+  reactionEntry: ReactionEntry;
+  messagesToReactionsAssociation?: MessagesToReactionsAssociationEntry;
+  usersToReactionsAssociation: UsersToReactionsAssociationEntry;
 }
 
-export interface HuddleEvent extends BaseEvent {
-  huddleState: string;
-}
-
-export interface ReactionEvent extends BaseEvent {
-  reactionAction: ReactionEventAction;
-  reaction: string;
-  originalAuthor: string;
-  originalItemType: string;
-  originalItem: ReactionFileItem | ReactionFileCommentItem | ReactionMessageItem;
-}
-
-export interface ReactionEntry {
+export interface ReactionEntry extends EntryMeta {
   id: string;
   ts: number;
   reaction: string;
@@ -39,21 +40,39 @@ export interface ReactionEntry {
   item_user: string;
 }
 
-export interface MessagesToReactionsAssociation {
+export interface MessagesToReactionsAssociationEntry extends EntryMeta {
   message_ts: string;
   message_channel: string;
   reaction_id: string;
 }
 
-export interface UsersToReactionsAssociation {
+export interface UsersToReactionsAssociationEntry extends EntryMeta {
   user_id: string;
   reaction_id: string;
   reaction_ts: number;
 }
 
-export interface Huddle {
+export interface HuddleEntry extends EntryMeta {
   ts: number;
   team_id: string;
   user_id: string;
   huddle_state: string;
+}
+
+export interface ChannelEntry extends Channel, EntryMeta {}
+
+export interface MemberJoinedChannelEntry extends EntryMeta {
+  user_id: string;
+  channel_id: string;
+  connection_identified_at: number;
+}
+
+export enum SlackEntryTypesV1 {
+  CHANNEL = "channel",
+  MESSAGE = "message",
+  REACTION = "reaction",
+  HUDDLE = "huddle",
+  USERS_TO_REACTIONS = "users_to_reactions",
+  REACTIONS_TO_MESSAGES = "reactions_to_messages",
+  MEMBERS_TO_CHANNELS = "members_to_channels",
 }
