@@ -29,7 +29,7 @@ In this approach, each user will need to install the app individually. This prov
    },
    "features": {
       "app_home": {
-         "home_tab_enabled": true,
+         "home_tab_enabled": false,
          "messages_tab_enabled": false,
          "messages_tab_read_only_enabled": false
       },
@@ -157,7 +157,7 @@ This approach involves a workspace-wide installation. An admin or someone with t
    },
    "features": {
       "app_home": {
-         "home_tab_enabled": true,
+         "home_tab_enabled": false,
          "messages_tab_enabled": false,
          "messages_tab_read_only_enabled": false
       },
