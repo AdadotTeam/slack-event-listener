@@ -32,7 +32,7 @@ export async function channelRenamed(params: ChannelEntry): Promise<void> {
 }
 
 export async function memberJoinedChannel(params: MemberJoinedChannelEntry): Promise<void> {
-  await requestBackend("api/external-slack/channelCreated", "post", {
+  await requestBackend("api/external-slack/member-join", "post", {
     headers: {
       accept: "application/json",
     },
