@@ -21,7 +21,7 @@ const stripAnsi = (() => {
  * Bellow we replace the Error with new object which all it's properties are enumerable.
  */
 
-const errorObjectFormat = winston.format((info) => {
+const errorObjectFormat = winston.format((info: any) => {
   if (info.error instanceof Error) {
     const enumeratedErrorObject = {} as any;
     Object.getOwnPropertyNames(info.error).forEach((key: string) => {
@@ -60,6 +60,7 @@ const Logger = {
           format: winston.format.combine(
             errorObjectFormat(),
             winston.format.colorize(),
+            // @ts-ignore
             winston.format.printf((info) => `[${info.level}] ${info.message}${rest(info)}`)
           ),
         }),

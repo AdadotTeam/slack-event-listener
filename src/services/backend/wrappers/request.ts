@@ -14,7 +14,7 @@ export async function requestBackend<Response>(
 ): Promise<Response> {
   opts.headers = {
     ...opts.headers,
-    api_key: env.API_KEY,
+    api_token: env.API_KEY,
   };
 
   const urlObj: URL = new URL(env.API_URL as string);
