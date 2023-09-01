@@ -5,7 +5,7 @@ An open-source solution designed to seamlessly connect your Slack workspace with
 
 ## Setting Up a Slack App
 
-Before you can run your Bolt app, you'll need to set up a Slack app on the Slack API platform. Below, you'll find two different approaches to do so.
+Before you can run your Bolt app, you'll need to set up a Slack app on the [Slack API](https://api.slack.com/) platform. Below, you'll find two different approaches to do so.
 
 ### Approach 1: Using User Scopes
 
@@ -255,7 +255,7 @@ Once you have your Slack app set up, you can run your Bolt app using either Dock
 3. Run the Docker container.
 
    ```
-   docker run -p 3000:3000 [name-of-your-image]
+   docker run -p 3100:3100 [name-of-your-image]
    ```
 
 ### Using Node.js
