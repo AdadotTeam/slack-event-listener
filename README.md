@@ -25,7 +25,7 @@ In this approach, each user will need to install the app individually. This prov
       "name": "Slack Event Listener",
       "description": "Notifications and Collaboration Analytics",
       "background_color": "#000000",
-      "long_description": "This app will listen and forward slack events to the Adadot API"
+      "long_description": "This app will listen and forward slack events to the Adadot API for each user that has installed it, assuming the corresponding Bolt App has been properly setup and run. Feel free to change this description if you wish."
    },
    "features": {
       "app_home": {
@@ -161,7 +161,7 @@ This approach involves a workspace-wide installation. An admin or someone with t
       "name": "Slack Event Listener",
       "description": "Notifications and Collaboration Analytics",
       "background_color": "#000000",
-      "long_description": "This app will listen and forward slack events to the Adadot API"
+      "long_description": "This app will listen and forward slack events to the Adadot API for each channel that the App Bot has been added to, assuming the corresponding Bolt App has been properly setup and run. Feel free to change this description if you wish."
    },
    "features": {
       "app_home": {
@@ -264,7 +264,7 @@ Once you have your Slack app set up, you can run your Bolt app using either Dock
 2. Build the Docker image with the correct environmental variables that you have from the first app installation.
 
    ```
-    docker build --build-arg LOG_LEVEL=silly --build-arg PROJECT_NAME=adadot-slack --build-arg PORT=3100 --build-arg SLACK_SIGNING_SECRET=b4e --build-arg SLACK_APP_TOKEN=xapp-1 --build-arg REDIS_HOST=localhost --build-arg REDIS_PORT=6379 --build-arg ENVIRONMENT_NAME=prod --build-arg API_KEY=trewtres3645s643s643 --build-arg API_URL=https:// -t my-adadot-slack .   ```
+    docker build --build-arg LOG_LEVEL=silly --build-arg PROJECT_NAME=adadot-slack --build-arg PORT=3100 --build-arg SLACK_SIGNING_SECRET=b4e --build-arg SLACK_BOT_TOKEN=xapp-1 --build-arg SLACK_APP_TOKEN=xapp-1  --build-arg API_KEY=trewtres3645s643s643 --build-arg API_URL=https:// -t my-adadot-slack .  
    ```
 
 3. Run the Docker container.
@@ -290,6 +290,7 @@ Once you have your Slack app set up, you can run your Bolt app using either Dock
 3. Set your environment variables.
 
    ```bash
+   export SLACK_APP_TOKEN='Your-Slack-App-Token'
    export SLACK_BOT_TOKEN='Your-Slack-Bot-Token'
    export SLACK_SIGNING_SECRET='Your-Signing-Secret'
    export API_KEY='Your-API-Key'
