@@ -43,6 +43,7 @@ export interface ReactionEntry extends EntryMeta {
 export interface MessagesToReactionsAssociationEntry extends EntryMeta {
   message_ts: string;
   message_channel: string;
+  team?: string;
   reaction_id: string;
 }
 
