@@ -25,7 +25,7 @@ In this approach, each user will need to install the app individually. This prov
       "name": "Slack Event Listener",
       "description": "Notifications and Collaboration Analytics",
       "background_color": "#000000",
-      "long_description": "This app will listen and forward slack events to the Adadot API"
+      "long_description": "This app will listen and forward slack events to the Adadot API for each user that has installed it, assuming the corresponding Bolt App has been properly setup and run. Feel free to change this description if you wish."
    },
    "features": {
       "app_home": {
@@ -39,9 +39,7 @@ In this approach, each user will need to install the app individually. This prov
       }
    },
    "oauth_config": {
-      "redirect_urls": [
-          "localhost:3000"
-      ],
+      "redirect_urls": [],
       "scopes": {
          "user": [
             "channels:history",
@@ -132,7 +130,17 @@ Note: feel free to change anything you wish in the app manifest, but keep in min
 
 #### Installation of the app
 
-After you have created the app, navigate to "Basic Information" and under "Install your app". You will need to install the app, and take note of the Bot Token, App Token and Signing Secret. You will need to provide these for the Bolt app. 
+After you have created the app, navigate to "Basic Information" and under "Install your app". You will need to install the app, and take note of the **Signing Secret**. 
+Under basic information, you will also need to create a new  **App Token**  with the connections:write scope:
+
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/f9a687bc-8d5e-496a-9967-ab69ef927500)
+
+Take note of the token value after you create it. Finally, you will also need to get the **Bot Token** for the slack app. You find this under the Oauth & Permissions:
+
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/382d334c-57b3-4910-9b53-a90022450c5c)
+
+If you don't see the Bot Token there, make sure you have installed the app to your workspace. 
+You will need to provide these values as environmental variables for the Bolt app. 
 You can then copy the installation link from the button you just clicked and share it with all the other users that want to install the app to have their events forwarded to the Adadot API.
 
 ### Approach 2: Using Bot Scopes
@@ -153,7 +161,7 @@ This approach involves a workspace-wide installation. An admin or someone with t
       "name": "Slack Event Listener",
       "description": "Notifications and Collaboration Analytics",
       "background_color": "#000000",
-      "long_description": "This app will listen and forward slack events to the Adadot API"
+      "long_description": "This app will listen and forward slack events to the Adadot API for each channel that the App Bot has been added to, assuming the corresponding Bolt App has been properly setup and run. Feel free to change this description if you wish."
    },
    "features": {
       "app_home": {
@@ -167,9 +175,7 @@ This approach involves a workspace-wide installation. An admin or someone with t
       }
    },
    "oauth_config": {
-      "redirect_urls": [
-         "localhost:3000"
-      ],
+      "redirect_urls": [],
       "scopes": {
          "bot": [
             "channels:history",
@@ -227,8 +233,17 @@ Note: feel free to change anything you wish in the app manifest, but keep in min
 
 #### Installation of the app
 
-After you have created the app, navigate to "Basic Information" and under "Install your app". You will need to install the app, and take note of the Bot Token, App Token and Signing Secret. You will need to provide these for the Bolt app.
-After this is done, you can start adding the bot to any channels that you wish to monitor for events. 
+After you have created the app, navigate to "Basic Information" and under "Install your app". You will need to install the app, and take note of the **Signing Secret**. 
+Under basic information, you will also need to create a new  **App Token**  with the connections:write scope:
+
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/f9a687bc-8d5e-496a-9967-ab69ef927500)
+
+Take note of the token value after you create it. Finally, you will also need to get the **Bot Token** for the slack app. You find this under the Oauth & Permissions:
+
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/382d334c-57b3-4910-9b53-a90022450c5c)
+
+If you don't see the Bot Token there, make sure you have installed the app to your workspace. 
+You will need to provide these values as environmental variables for the Bolt app. 
 
 ## Getting your Adadot API key
 
@@ -249,7 +264,7 @@ Once you have your Slack app set up, you can run your Bolt app using either Dock
 2. Build the Docker image with the correct environmental variables that you have from the first app installation.
 
    ```
-    docker build --build-arg LOG_LEVEL=silly --build-arg PROJECT_NAME=adadot-slack --build-arg PORT=3100 --build-arg SLACK_SIGNING_SECRET=b4e --build-arg SLACK_APP_TOKEN=xapp-1 --build-arg REDIS_HOST=localhost --build-arg REDIS_PORT=6379 --build-arg ENVIRONMENT_NAME=prod --build-arg API_KEY=trewtres3645s643s643 --build-arg API_URL=https:// -t my-adadot-slack .   ```
+    docker build --build-arg LOG_LEVEL=silly --build-arg PROJECT_NAME=adadot-slack --build-arg PORT=3100 --build-arg SLACK_SIGNING_SECRET=b4e --build-arg SLACK_BOT_TOKEN=xapp-1 --build-arg SLACK_APP_TOKEN=xapp-1  --build-arg API_KEY=trewtres3645s643s643 --build-arg API_URL=https:// -t my-adadot-slack .  
    ```
 
 3. Run the Docker container.
@@ -275,6 +290,7 @@ Once you have your Slack app set up, you can run your Bolt app using either Dock
 3. Set your environment variables.
 
    ```bash
+   export SLACK_APP_TOKEN='Your-Slack-App-Token'
    export SLACK_BOT_TOKEN='Your-Slack-Bot-Token'
    export SLACK_SIGNING_SECRET='Your-Signing-Secret'
    export API_KEY='Your-API-Key'
