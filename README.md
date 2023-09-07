@@ -5,7 +5,7 @@ An open-source solution designed to seamlessly connect your Slack workspace with
 
 ## Setting Up a Slack App
 
-Before you can run your Bolt app, you'll need to set up a Slack app on the [Slack API](https://api.slack.com/) platform. Below, you'll find two different approaches to do so.
+Before you can run your Bolt app, you'll need to set up a Slack app on the [Slack API](https://api.slack.com/) platform. Below, you'll find two different approaches to do so. At minimum, the API calls require the slack team id(workspace id), user id(where applicable) and user email to be sent along with the event for user matching purposes.
 
 ### Approach 1: Using User Scopes
 
@@ -133,11 +133,11 @@ Note: feel free to change anything you wish in the app manifest, but keep in min
 After you have created the app, navigate to "Basic Information" and under "Install your app". You will need to install the app, and take note of the **Signing Secret**. 
 Under basic information, you will also need to create a new  **App Token**  with the connections:write scope:
 
-![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/f9a687bc-8d5e-496a-9967-ab69ef927500)
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/b5154c6b-32f3-4021-9a6a-999ce65ea8d2)
 
 Take note of the token value after you create it. Finally, you will also need to get the **Bot Token** for the slack app. You find this under the Oauth & Permissions:
 
-![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/382d334c-57b3-4910-9b53-a90022450c5c)
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/a01eeb55-109b-4f0d-a803-3f0aee7c7b64)
 
 If you don't see the Bot Token there, make sure you have installed the app to your workspace. 
 You will need to provide these values as environmental variables for the Bolt app. 
@@ -236,11 +236,11 @@ Note: feel free to change anything you wish in the app manifest, but keep in min
 After you have created the app, navigate to "Basic Information" and under "Install your app". You will need to install the app, and take note of the **Signing Secret**. 
 Under basic information, you will also need to create a new  **App Token**  with the connections:write scope:
 
-![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/f9a687bc-8d5e-496a-9967-ab69ef927500)
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/b5154c6b-32f3-4021-9a6a-999ce65ea8d2)
 
 Take note of the token value after you create it. Finally, you will also need to get the **Bot Token** for the slack app. You find this under the Oauth & Permissions:
 
-![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/382d334c-57b3-4910-9b53-a90022450c5c)
+![image](https://github.com/AdadotTeam/slack-event-listener/assets/101565191/a01eeb55-109b-4f0d-a803-3f0aee7c7b64)
 
 If you don't see the Bot Token there, make sure you have installed the app to your workspace. 
 You will need to provide these values as environmental variables for the Bolt app. 
